@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pcv-burgundy: #6b1d1d;
+  --color-pcv-burgundy-dark: #4a1414;
+  --color-pcv-burgundy-light: #8b2e2e;
+  --color-pcv-brown: #5c3d2e;
+  --color-pcv-brown-light: #7a5544;
+  --color-pcv-cream: #f5f0e8;
+  --color-pcv-cream-dark: #e8dfd3;
+  --color-pcv-gold: #c9a84c;
+  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--color-pcv-cream);
+  color: #2d2d2d;
+  font-family: var(--font-sans);
+}
+
+.hero-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-pcv-brown) 0%,
+    var(--color-pcv-burgundy-dark) 50%,
+    var(--color-pcv-burgundy) 100%
+  );
+}
+
+.card-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-pcv-brown-light) 0%,
+    var(--color-pcv-brown) 100%
+  );
+}
+
+.btn-primary {
+  @apply rounded-full bg-pcv-burgundy px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-pcv-burgundy-dark;
+}
+
+.btn-secondary {
+  @apply rounded-full border-2 border-pcv-burgundy bg-white px-6 py-2.5 text-sm font-semibold text-pcv-burgundy transition hover:bg-pcv-cream-dark;
+}
+
+.btn-outline-light {
+  @apply rounded-full border-2 border-white/80 bg-white/10 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20;
+}
+
+.input-field {
+  @apply w-full rounded-lg border border-pcv-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition focus:border-pcv-burgundy focus:ring-2 focus:ring-pcv-burgundy/20;
+}
+
+.select-field {
+  @apply rounded-lg border border-pcv-cream-dark bg-white px-4 py-2.5 text-sm outline-none focus:border-pcv-burgundy;
+}
+
+.section-card {
+  @apply rounded-2xl border border-pcv-cream-dark bg-white p-6 shadow-sm;
+}
+
+.data-table {
+  @apply w-full text-left text-sm;
+}
+
+.data-table th {
+  @apply border-b border-pcv-cream-dark bg-pcv-cream px-4 py-3 font-semibold text-pcv-burgundy;
+}
+
+.data-table td {
+  @apply border-b border-pcv-cream-dark px-4 py-3;
+}
+
+.leaflet-container {
+  @apply z-0 rounded-xl;
+}
