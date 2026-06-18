@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { events } from "@/lib/db/schema";
 import { gte } from "drizzle-orm";
 import { formatDate } from "@/lib/utils";
+import { ChurchLogo } from "@/components/ChurchLogo";
 
 export default async function EventsPage() {
   const today = new Date().toISOString().split("T")[0];
@@ -12,7 +13,7 @@ export default async function EventsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="page-container">
       <h1 className="mb-2 text-3xl font-bold text-pcv-burgundy">Events</h1>
       <p className="mb-8 text-gray-600">
         Upcoming events across the Presbyterian Church of Vanuatu.
@@ -25,7 +26,11 @@ export default async function EventsPage() {
             className="rounded-xl border border-pcv-cream-dark bg-white p-6"
           >
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
+              <div className="flex min-w-0 flex-1 gap-3">
+                {event.church && (
+                  <ChurchLogo church={event.church} size="md" className="mt-1" />
+                )}
+                <div>
                 <h2 className="text-xl font-semibold text-pcv-burgundy">
                   {event.title}
                 </h2>
@@ -33,6 +38,7 @@ export default async function EventsPage() {
                   {formatDate(event.startDate)}
                   {event.endDate && ` — ${formatDate(event.endDate)}`}
                 </p>
+                </div>
               </div>
               <div className="flex gap-2">
                 {event.category && (

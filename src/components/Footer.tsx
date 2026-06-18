@@ -1,15 +1,14 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export function Footer() {
   return (
-    <footer className="border-t border-pcv-cream-dark bg-pcv-burgundy-dark text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:grid-cols-3">
+    <footer className="border-t border-blue-900/20 bg-pcv-burgundy-dark text-white">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:py-10 md:grid-cols-3">
         <div>
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-lg font-bold">
-            PCV
-          </div>
+          <Logo size="md" showText={false} href="/" variant="light" className="mb-3" />
           <p className="text-sm text-white/80">
-            Presbyterian Church of Vanuatu — serving congregations across all
+            Presbitirin Jyos Blong Vanuatu — serving congregations across all
             islands with faith, fellowship, and mission.
           </p>
         </div>
@@ -32,8 +31,18 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/what-we-believe" className="hover:text-white">
+                What We Believe
+              </Link>
+            </li>
+            <li>
               <Link href="/news" className="hover:text-white">
                 Media Releases
+              </Link>
+            </li>
+            <li>
+              <Link href="/reports" className="hover:text-white">
+                Public Reports
               </Link>
             </li>
           </ul>
@@ -51,7 +60,7 @@ export function Footer() {
           </p>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/60">
+      <div className="border-t border-white/10 px-4 py-4 text-center text-xs text-white/60">
         © {new Date().getFullYear()} Presbyterian Church of Vanuatu
       </div>
     </footer>

@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { pastors, churches } from "@/lib/db/schema";
 import { eq, like, and } from "drizzle-orm";
+import { PageHeader } from "@/components/PageHeader";
+import { ChurchLogo } from "@/components/ChurchLogo";
 
 interface Props {
   searchParams: Promise<{
@@ -27,9 +29,7 @@ export default async function PastorsPage({ searchParams }: Props) {
       and(
         status ? eq(pastors.status, status) : undefined,
         island ? eq(pastors.islandOrigin, island) : undefined,
-        q
-          ? like(pastors.firstName, `%${q}%`)
-          : undefined
+        q ? like(pastors.firstName, `%${q}%`) : undefined
       )
     )
     .orderBy(pastors.lastName);
@@ -39,28 +39,25 @@ export default async function PastorsPage({ searchParams }: Props) {
     .from(pastors);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="mb-2 text-3xl font-bold text-pcv-burgundy">
-        Pastor Directory
-      </h1>
-      <p className="mb-8 text-gray-600">
-        Search and browse pastors serving across the Presbyterian Church of
-        Vanuatu.
-      </p>
+    <div className="page-container">
+      <PageHeader
+        title="Pastor Directory"
+        description="Search and browse pastors serving across the Presbyterian Church of Vanuatu."
+      />
 
-      <form className="mb-8 flex flex-wrap gap-3">
+      <form className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:flex-wrap">
         <input
           name="q"
           defaultValue={q}
           placeholder="Search by name..."
-          className="input-field max-w-xs"
+          className="input-field w-full sm:max-w-xs"
         />
-        <select name="status" defaultValue={status} className="select-field">
+        <select name="status" defaultValue={status} className="select-field w-full sm:w-auto">
           <option value="">Any status</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
-        <select name="island" defaultValue={island} className="select-field">
+        <select name="island" defaultValue={island} className="select-field w-full sm:w-auto">
           <option value="">Any island</option>
           {islands
             .filter((i) => i.island)
@@ -70,12 +67,67 @@ export default async function PastorsPage({ searchParams }: Props) {
               </option>
             ))}
         </select>
-        <button type="submit" className="btn-primary">
+        <button type="submit" className="btn-primary w-full sm:w-auto">
           Search
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-xl border border-pcv-cream-dark bg-white">
+      {/* Mobile cards */}
+      <div className="space-y-4 md:hidden">
+        {allPastors.map(({ pastor, church }) => (
+          <article
+            key={pastor.id}
+            className="rounded-xl border border-pcv-cream-dark bg-white p-4"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <h2 className="font-semibold text-pcv-burgundy">
+                {pastor.firstName} {pastor.lastName}
+              </h2>
+              <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800">
+                {pastor.status}
+              </span>
+            </div>
+            <dl className="mt-3 space-y-2 text-sm">
+              {(pastor.email || pastor.phone) && (
+                <div>
+                  <dt className="text-xs font-medium text-gray-500">Contact</dt>
+                  <dd className="text-gray-700">
+                    {pastor.email && <div>{pastor.email}</div>}
+                    {pastor.phone && <div>{pastor.phone}</div>}
+                  </dd>
+                </div>
+              )}
+              <div>
+                <dt className="text-xs font-medium text-gray-500">Rank</dt>
+                <dd>
+                  {pastor.rank}
+                  {pastor.ordinationYear && ` · ${pastor.ordinationYear}`}
+                </dd>
+              </div>
+              {(pastor.islandOrigin || pastor.villageOrigin) && (
+                <div>
+                  <dt className="text-xs font-medium text-gray-500">Origin</dt>
+                  <dd>
+                    {[pastor.islandOrigin, pastor.villageOrigin]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </dd>
+                </div>
+              )}
+              <div>
+                <dt className="text-xs font-medium text-gray-500">Church</dt>
+                <dd className="flex items-center gap-2">
+                  {church && <ChurchLogo church={church} size="sm" />}
+                  <span>{church?.name ?? "Unassigned"}</span>
+                </dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden overflow-x-auto rounded-xl border border-pcv-cream-dark bg-white md:block">
         <table className="data-table">
           <thead>
             <tr>
@@ -104,10 +156,7 @@ export default async function PastorsPage({ searchParams }: Props) {
                 <td className="text-sm">
                   {pastor.rank}
                   {pastor.ordinationYear && (
-                    <span className="text-gray-500">
-                      {" "}
-                      · {pastor.ordinationYear}
-                    </span>
+                    <span className="text-gray-500"> · {pastor.ordinationYear}</span>
                   )}
                 </td>
                 <td className="text-sm text-gray-600">
@@ -116,7 +165,12 @@ export default async function PastorsPage({ searchParams }: Props) {
                     .join(", ")}
                 </td>
                 <td className="text-sm">
-                  {church?.name ?? (
+                  {church ? (
+                    <span className="flex items-center gap-2">
+                      <ChurchLogo church={church} size="sm" />
+                      {church.name}
+                    </span>
+                  ) : (
                     <span className="text-gray-400">Unassigned</span>
                   )}
                 </td>

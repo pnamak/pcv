@@ -38,6 +38,7 @@ export const churches = sqliteTable("churches", {
   memberCount: integer("member_count").default(0),
   serviceTimes: text("service_times"),
   tags: text("tags"),
+  logoPath: text("logo_path"),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
@@ -59,6 +60,7 @@ export const newsArticles = sqliteTable("news_articles", {
   title: text("title").notNull(),
   summary: text("summary"),
   content: text("content").notNull(),
+  churchId: integer("church_id").references(() => churches.id),
   status: text("status").notNull().default("draft"),
   publishedAt: text("published_at"),
   createdAt: text("created_at").notNull(),
@@ -76,6 +78,7 @@ export const reports = sqliteTable("reports", {
   churchId: integer("church_id").references(() => churches.id),
   presbytery: text("presbytery"),
   reportType: text("report_type").notNull().default("general"),
+  visibility: text("visibility").notNull().default("private"),
   uploadedBy: integer("uploaded_by").references(() => staffUsers.id),
   uploadedAt: text("uploaded_at").notNull(),
 });

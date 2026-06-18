@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { parseTags } from "@/lib/utils";
 import { ChurchMapWrapper } from "@/components/ChurchMapWrapper";
+import { PageHeader } from "@/components/PageHeader";
+import { ChurchLogo } from "@/components/ChurchLogo";
 
 export default async function ChurchesPage() {
   const allChurches = await db.query.churches.findMany({
@@ -20,32 +22,36 @@ export default async function ChurchesPage() {
         ? `${c.pastor.firstName} ${c.pastor.lastName}`
         : null,
       memberCount: c.memberCount,
+      logoPath: c.logoPath,
     }));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="mb-2 text-3xl font-bold text-pcv-burgundy">
-        PCV Church Directory
-      </h1>
-      <p className="mb-8 text-gray-600">
-        Explore congregations across Vanuatu on the map and browse church
-        details.
-      </p>
+    <div className="page-container">
+      <PageHeader
+        title="PCV Church Directory"
+        description="Explore congregations across Vanuatu on the map and browse church details."
+      />
 
       <div className="mb-10 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <ChurchMapWrapper churches={mapChurches} height="500px" />
+        <div className="min-h-[280px] lg:col-span-2 lg:min-h-[500px]">
+          <ChurchMapWrapper
+            churches={mapChurches}
+            height="100%"
+            className="h-[280px] sm:h-[360px] lg:h-[500px]"
+          />
         </div>
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-pcv-burgundy">
             Church Cards
           </h2>
-          <div className="max-h-[500px] space-y-3 overflow-y-auto">
+          <div className="max-h-[400px] space-y-3 overflow-y-auto lg:max-h-[500px]">
             {allChurches.map((church) => (
               <div
                 key={church.id}
-                className="rounded-xl border border-pcv-cream-dark bg-white p-4"
+                className="flex gap-3 rounded-xl border border-pcv-cream-dark bg-white p-4"
               >
+                <ChurchLogo church={church} size="md" className="mt-0.5" />
+                <div className="min-w-0 flex-1">
                 <h3 className="font-semibold text-pcv-burgundy">
                   {church.name}
                 </h3>
@@ -77,6 +83,7 @@ export default async function ChurchesPage() {
                       {tag}
                     </span>
                   ))}
+                </div>
                 </div>
               </div>
             ))}

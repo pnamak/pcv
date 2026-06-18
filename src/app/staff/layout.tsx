@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getStaffUser } from "@/lib/auth";
 import { StaffNav } from "@/components/StaffNav";
 
@@ -10,9 +9,9 @@ export default async function StaffLayout({
   const user = await getStaffUser();
 
   return (
-    <div className="flex min-h-[calc(100vh-8rem)]">
-      {user && <StaffNav />}
-      <div className="flex-1 p-6">{children}</div>
+    <div className="flex min-h-[calc(100vh-8rem)] flex-col md:flex-row">
+      {user && <StaffNav userName={user.name} />}
+      <div className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</div>
     </div>
   );
 }

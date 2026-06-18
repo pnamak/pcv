@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { getStaffUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { createEventAction, deleteEventAction } from "@/lib/actions";
+import { deleteEventAction } from "@/lib/actions";
+import { CreateEventForm } from "@/components/forms/CreateEventForm";
 import { formatDate } from "@/lib/utils";
 
 export default async function StaffEventsPage() {
@@ -18,56 +19,42 @@ export default async function StaffEventsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-pcv-burgundy">
+      <h1 className="mb-2 text-xl font-bold text-pcv-burgundy sm:text-2xl">
         Event Management
       </h1>
+      <p className="mb-6 text-sm text-gray-600">
+        Schedule events that appear on the public calendar.
+      </p>
 
-      <section className="section-card mb-10">
-        <h2 className="mb-4 text-lg font-semibold">Add Event</h2>
-        <form action={createEventAction} className="grid gap-4 sm:grid-cols-2">
-          <input name="title" placeholder="Event title" required className="input-field sm:col-span-2" />
-          <textarea name="description" placeholder="Description" className="input-field sm:col-span-2" />
-          <input name="startDate" type="date" required className="input-field" />
-          <input name="endDate" type="date" className="input-field" />
-          <input name="category" placeholder="Category" className="input-field" />
-          <input name="province" placeholder="Province" className="input-field" />
-          <select name="churchId" className="select-field sm:col-span-2">
-            <option value="">No specific church</option>
-            {allChurches.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn-primary sm:col-span-2">
-            Add Event
-          </button>
-        </form>
+      <section className="section-card mb-10" id="create">
+        <h2 className="mb-4 text-lg font-semibold">Create Event</h2>
+        <CreateEventForm churches={allChurches} />
       </section>
 
+      <h2 className="mb-4 text-lg font-semibold">
+        All Events ({allEvents.length})
+      </h2>
       <div className="space-y-4">
         {allEvents.map((event) => (
-          <div key={event.id} className="section-card flex items-start justify-between">
+          <div key={event.id} className="section-card flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h3 className="font-semibold text-pcv-burgundy">{event.title}</h3>
-              <p className="text-sm text-gray-500">
+              {event.description && <p className="mt-1 text-sm text-gray-600">{event.description}</p>}
+              <p className="mt-1 text-sm text-gray-500">
                 {formatDate(event.startDate)}
                 {event.endDate && ` — ${formatDate(event.endDate)}`}
               </p>
-              {event.church && (
-                <p className="text-sm text-gray-500">{event.church.name}</p>
-              )}
+              {event.category && <p className="text-sm text-gray-500">Category: {event.category}</p>}
+              {event.church && <p className="text-sm text-gray-500">{event.church.name}</p>}
             </div>
             <form action={deleteEventAction.bind(null, event.id)}>
-              <button
-                type="submit"
-                className="rounded bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
-              >
-                Delete
-              </button>
+              <button type="submit" className="rounded bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">Delete</button>
             </form>
           </div>
         ))}
+        {allEvents.length === 0 && (
+          <p className="text-sm text-gray-500">No events yet. Create one above.</p>
+        )}
       </div>
     </div>
   );

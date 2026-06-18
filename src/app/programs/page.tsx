@@ -6,7 +6,7 @@ export default async function ProgramsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="page-container">
       <h1 className="mb-2 text-3xl font-bold text-pcv-burgundy">
         Church Programs
       </h1>

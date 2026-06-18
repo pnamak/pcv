@@ -19,3 +19,15 @@ export function parseTags(tags: string | null): string[] {
 export function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+export function getChurchLogoSrc(
+  church:
+    | { id: number; logoPath?: string | null }
+    | null
+    | undefined
+): string {
+  if (church?.logoPath) {
+    return `/api/churches/${church.id}/logo`;
+  }
+  return "/images/pcv-logo.png";
+}

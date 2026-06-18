@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
+import { getChurchLogoSrc } from "@/lib/utils";
 import "leaflet/dist/leaflet.css";
 
 const defaultIcon = L.icon({
@@ -25,6 +26,7 @@ export interface MapChurch {
   presbytery?: string | null;
   pastorName?: string | null;
   memberCount?: number | null;
+  logoPath?: string | null;
 }
 
 interface ChurchMapProps {
@@ -62,8 +64,8 @@ export function ChurchMap({
   if (!mounted) {
     return (
       <div
-        className="flex items-center justify-center rounded-xl bg-pcv-cream-dark text-sm text-gray-500"
-        style={{ height }}
+        className="flex h-full min-h-[280px] items-center justify-center rounded-xl bg-pcv-cream-dark text-sm text-gray-500"
+        style={height !== "100%" ? { height } : undefined}
       >
         Loading map...
       </div>
@@ -79,7 +81,7 @@ export function ChurchMap({
     <MapContainer
       center={center}
       zoom={7}
-      style={{ height, width: "100%" }}
+      style={height === "100%" ? { height: "100%", width: "100%" } : { height, width: "100%" }}
       className="rounded-xl"
     >
       <TileLayer
@@ -90,6 +92,14 @@ export function ChurchMap({
       {churches.map((church) => (
         <Marker key={church.id} position={[church.latitude, church.longitude]}>
           <Popup>
+            <div className="flex items-start gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={getChurchLogoSrc(church)}
+                alt={`${church.name} logo`}
+                className="h-10 w-10 shrink-0 object-contain"
+              />
+              <div>
             <strong>{church.name}</strong>
             {church.presbytery && (
               <p className="text-xs text-gray-600">{church.presbytery}</p>
@@ -100,6 +110,8 @@ export function ChurchMap({
             {church.memberCount != null && (
               <p className="text-xs">{church.memberCount} members</p>
             )}
+              </div>
+            </div>
           </Popup>
         </Marker>
       ))}

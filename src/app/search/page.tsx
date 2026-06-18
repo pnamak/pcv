@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
-import { churches, pastors, newsArticles, events } from "@/lib/db/schema";
+import { churches, pastors, newsArticles, events, reports } from "@/lib/db/schema";
 import { eq, or, like, and } from "drizzle-orm";
 import Link from "next/link";
+import { ChurchLogo } from "@/components/ChurchLogo";
 
 interface Props {
   searchParams: Promise<{ q?: string }>;
@@ -20,7 +21,7 @@ export default async function SearchPage({ searchParams }: Props) {
     );
   }
 
-  const [churchResults, pastorResults, newsResults, eventResults] =
+  const [churchResults, pastorResults, newsResults, eventResults, reportResults] =
     await Promise.all([
       db.query.churches.findMany({
         where: or(
@@ -54,13 +55,24 @@ export default async function SearchPage({ searchParams }: Props) {
         ),
         limit: 10,
       }),
+      db.query.reports.findMany({
+        where: and(
+          eq(reports.visibility, "public"),
+          or(
+            like(reports.title, `%${q}%`),
+            like(reports.description, `%${q}%`)
+          )
+        ),
+        limit: 10,
+      }),
     ]);
 
   const hasResults =
     churchResults.length +
       pastorResults.length +
       newsResults.length +
-      eventResults.length >
+      eventResults.length +
+      reportResults.length >
     0;
 
   return (
@@ -78,11 +90,14 @@ export default async function SearchPage({ searchParams }: Props) {
           <h2 className="mb-3 font-semibold">Churches</h2>
           <ul className="space-y-2">
             {churchResults.map((c) => (
-              <li key={c.id}>
+              <li key={c.id} className="flex items-center gap-2">
+                <ChurchLogo church={c} size="sm" />
+                <div>
                 <Link href="/churches" className="text-pcv-burgundy hover:underline">
                   {c.name}
                 </Link>
                 <span className="text-sm text-gray-500"> — {c.island}</span>
+                </div>
               </li>
             ))}
           </ul>
@@ -123,13 +138,31 @@ export default async function SearchPage({ searchParams }: Props) {
       )}
 
       {eventResults.length > 0 && (
-        <section>
+        <section className="mb-8">
           <h2 className="mb-3 font-semibold">Events</h2>
           <ul className="space-y-2">
             {eventResults.map((e) => (
               <li key={e.id}>
                 <Link href="/events" className="text-pcv-burgundy hover:underline">
                   {e.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {reportResults.length > 0 && (
+        <section>
+          <h2 className="mb-3 font-semibold">Reports</h2>
+          <ul className="space-y-2">
+            {reportResults.map((r) => (
+              <li key={r.id}>
+                <Link
+                  href={`/api/reports/${r.id}/download`}
+                  className="text-pcv-burgundy hover:underline"
+                >
+                  {r.title}
                 </Link>
               </li>
             ))}

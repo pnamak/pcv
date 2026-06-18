@@ -12,6 +12,7 @@ import {
   subMonths,
 } from "date-fns";
 import Link from "next/link";
+import { PageHeader } from "@/components/PageHeader";
 
 interface Props {
   searchParams: Promise<{
@@ -57,15 +58,13 @@ export default async function CalendarPage({ searchParams }: Props) {
     .from(events);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="mb-2 text-3xl font-bold text-pcv-burgundy">
-        PCV Public Calendar
-      </h1>
-      <p className="mb-8 text-gray-600">
-        View upcoming events across presbyteries and provinces.
-      </p>
+    <div className="page-container">
+      <PageHeader
+        title="PCV Public Calendar"
+        description="View upcoming events across presbyteries and provinces."
+      />
 
-      <form className="mb-6 flex flex-wrap items-end gap-3">
+      <form className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-600">
             Category
@@ -102,31 +101,35 @@ export default async function CalendarPage({ searchParams }: Props) {
         </button>
       </form>
 
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
         <Link
           href={`/calendar?month=${prevMonth}${category ? `&category=${category}` : ""}${province ? `&province=${province}` : ""}`}
-          className="btn-secondary"
+          className="btn-secondary w-full text-center sm:w-auto"
         >
           Previous
         </Link>
-        <h2 className="text-xl font-semibold text-pcv-burgundy">
+        <h2 className="text-lg font-semibold text-pcv-burgundy sm:text-xl">
           {format(currentMonth, "MMMM yyyy")}
         </h2>
         <Link
           href={`/calendar?month=${nextMonth}${category ? `&category=${category}` : ""}${province ? `&province=${province}` : ""}`}
-          className="btn-secondary"
+          className="btn-secondary w-full text-center sm:w-auto"
         >
           Next
         </Link>
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="min-w-[320px] grid grid-cols-7 gap-1 sm:gap-2">
+        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
           <div
-            key={d}
-            className="py-2 text-center text-xs font-semibold text-pcv-burgundy"
+            key={`${d}-${i}`}
+            className="py-2 text-center text-xs font-semibold text-pcv-burgundy sm:text-sm"
           >
-            {d}
+            <span className="sm:hidden">{d}</span>
+            <span className="hidden sm:inline">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i]}
+            </span>
           </div>
         ))}
         {Array.from({ length: days[0].getDay() }).map((_, i) => (
@@ -139,13 +142,13 @@ export default async function CalendarPage({ searchParams }: Props) {
           return (
             <div
               key={day.toISOString()}
-              className="min-h-24 rounded-lg border border-pcv-cream-dark bg-white p-2"
+              className="min-h-16 rounded-lg border border-pcv-cream-dark bg-white p-1 sm:min-h-24 sm:p-2"
             >
-              <span className="text-sm font-medium">{format(day, "d")}</span>
+              <span className="text-xs font-medium sm:text-sm">{format(day, "d")}</span>
               {dayEvents.map((e) => (
                 <div
                   key={e.id}
-                  className="mt-1 rounded bg-pcv-burgundy/10 px-1 py-0.5 text-xs text-pcv-burgundy"
+                  className="mt-0.5 truncate rounded bg-pcv-burgundy/10 px-0.5 py-0.5 text-[10px] text-pcv-burgundy sm:mt-1 sm:px-1 sm:text-xs"
                   title={e.description ?? undefined}
                 >
                   {e.title}
@@ -154,6 +157,7 @@ export default async function CalendarPage({ searchParams }: Props) {
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );

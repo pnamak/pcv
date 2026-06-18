@@ -19,6 +19,7 @@ export const churchesRelations = relations(churches, ({ one, many }) => ({
   }),
   events: many(events),
   reports: many(reports),
+  newsArticles: many(newsArticles),
 }));
 
 export const eventsRelations = relations(events, ({ one }) => ({
@@ -43,4 +44,9 @@ export const staffUsersRelations = relations(staffUsers, ({ many }) => ({
   reports: many(reports),
 }));
 
-export const newsArticlesRelations = relations(newsArticles, () => ({}));
+export const newsArticlesRelations = relations(newsArticles, ({ one }) => ({
+  church: one(churches, {
+    fields: [newsArticles.churchId],
+    references: [churches.id],
+  }),
+}));

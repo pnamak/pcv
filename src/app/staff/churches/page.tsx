@@ -2,11 +2,12 @@ import { redirect } from "next/navigation";
 import { getStaffUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
-  createChurchAction,
   updateChurchAction,
   deleteChurchAction,
 } from "@/lib/actions";
+import { CreateChurchForm } from "@/components/forms/CreateChurchForm";
 import { MapLocationPicker } from "@/components/MapLocationPicker";
+import { ChurchLogo } from "@/components/ChurchLogo";
 import { parseTags } from "@/lib/utils";
 
 export default async function StaffChurchesPage() {
@@ -23,45 +24,39 @@ export default async function StaffChurchesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-pcv-burgundy">
+      <h1 className="mb-2 text-xl font-bold text-pcv-burgundy sm:text-2xl">
         Church Management
       </h1>
+      <p className="mb-6 text-sm text-gray-600">
+        Create new churches and manage existing congregation records.
+      </p>
 
-      <section className="section-card mb-10">
-        <h2 className="mb-4 text-lg font-semibold">Add Church</h2>
-        <form action={createChurchAction} className="grid gap-4 sm:grid-cols-2">
-          <input name="name" placeholder="Church name" required className="input-field" />
-          <input name="areaCouncil" placeholder="Area council" className="input-field" />
-          <input name="sessionName" placeholder="Session name" className="input-field" />
-          <input name="presbytery" placeholder="Presbytery" className="input-field" />
-          <input name="island" placeholder="Island" className="input-field" />
-          <input name="province" placeholder="Province" className="input-field" />
-          <select name="pastorId" className="select-field">
-            <option value="">Vacant</option>
-            {allPastors.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.firstName} {p.lastName}
-              </option>
-            ))}
-          </select>
-          <input name="memberCount" type="number" placeholder="Member count" className="input-field" />
-          <input name="serviceTimes" placeholder="Service times" className="input-field sm:col-span-2" />
-          <input name="tags" placeholder="Tags (comma-separated)" className="input-field sm:col-span-2" />
-          <div className="sm:col-span-2">
-            <MapLocationPicker />
-          </div>
-          <button type="submit" className="btn-primary sm:col-span-2">
-            Add Church
-          </button>
-        </form>
+      <section className="section-card mb-10" id="create">
+        <h2 className="mb-4 text-lg font-semibold">Create Church</h2>
+        <CreateChurchForm pastors={allPastors} />
       </section>
 
       <section className="space-y-6">
-        <h2 className="text-lg font-semibold">All Churches</h2>
+        <h2 className="text-lg font-semibold">
+          All Churches ({allChurches.length})
+        </h2>
+        {allChurches.length === 0 && (
+          <p className="text-sm text-gray-500">No churches yet. Create one above.</p>
+        )}
         {allChurches.map((church) => (
           <div key={church.id} className="section-card">
+            <div className="mb-4 flex items-center gap-3">
+              <ChurchLogo church={church} size="md" />
+              <div>
+                <p className="font-medium text-pcv-burgundy">{church.name}</p>
+                <p className="text-xs text-gray-500">
+                  {church.logoPath ? "Custom church logo" : "No logo uploaded"}
+                </p>
+              </div>
+            </div>
             <form
               action={updateChurchAction.bind(null, church.id)}
+              encType="multipart/form-data"
               className="grid gap-4 sm:grid-cols-2"
             >
               <input name="name" defaultValue={church.name} required className="input-field" />
@@ -86,19 +81,33 @@ export default async function StaffChurchesPage() {
                 className="input-field sm:col-span-2"
               />
               <div className="sm:col-span-2">
+                <label className="mb-1 block text-sm font-medium">
+                  Replace logo
+                </label>
+                <input
+                  name="logo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,.jpg,.jpeg,.png,.webp,.gif,.svg"
+                  className="input-field"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Leave empty to keep the current logo.
+                </p>
+              </div>
+              <div className="sm:col-span-2">
                 <MapLocationPicker
                   defaultLat={church.latitude}
                   defaultLng={church.longitude}
                 />
               </div>
-              <div className="flex gap-2 sm:col-span-2">
+              <div className="flex flex-wrap gap-2 sm:col-span-2">
                 <button type="submit" className="btn-primary">
-                  Save
+                  Save Changes
                 </button>
                 <button
                   type="submit"
                   formAction={deleteChurchAction.bind(null, church.id)}
-                  className="rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+                  className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 sm:px-6 sm:py-2.5"
                 >
                   Delete
                 </button>

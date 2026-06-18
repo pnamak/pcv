@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { newsArticles } from "@/lib/db/schema";
 import { eq, desc, or, like, and } from "drizzle-orm";
 import Link from "next/link";
+import { PageHeader } from "@/components/PageHeader";
+import { NewsCardHeader } from "@/components/NewsCardHeader";
 
 interface Props {
   searchParams: Promise<{ q?: string }>;
@@ -22,37 +24,34 @@ export default async function NewsPage({ searchParams }: Props) {
           )
         : undefined
     ),
+    with: { church: true },
     orderBy: [desc(newsArticles.publishedAt)],
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="mb-2 text-3xl font-bold text-pcv-burgundy">
-        PCV Media Releases
-      </h1>
-      <p className="mb-8 text-gray-600">
-        Official news and announcements from the Presbyterian Church of Vanuatu.
-      </p>
+    <div className="page-container">
+      <PageHeader
+        title="PCV Media Releases"
+        description="Official news and announcements from the Presbyterian Church of Vanuatu."
+      />
 
-      <form className="mb-8">
+      <form className="mb-6 sm:mb-8">
         <input
           name="q"
           defaultValue={q}
           placeholder="Search news by title, summary, or content..."
-          className="input-field max-w-lg"
+          className="input-field w-full max-w-lg"
         />
       </form>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
         {articles.map((article) => (
           <article
             key={article.id}
             className="overflow-hidden rounded-2xl border border-pcv-cream-dark bg-white shadow-sm"
           >
-            <div className="card-gradient flex h-28 items-center justify-center">
-              <span className="text-3xl font-bold text-white/90">PCV</span>
-            </div>
-            <div className="p-5">
+            <NewsCardHeader church={article.church} />
+            <div className="p-4 sm:p-5">
               <time className="text-xs text-gray-500">
                 {article.publishedAt
                   ? new Date(article.publishedAt).toLocaleDateString("en-VU", {
@@ -62,7 +61,7 @@ export default async function NewsPage({ searchParams }: Props) {
                     })
                   : ""}
               </time>
-              <h2 className="mt-1 text-lg font-semibold text-pcv-burgundy">
+              <h2 className="mt-1 text-base font-semibold text-pcv-burgundy sm:text-lg">
                 {article.title}
               </h2>
               <p className="mt-2 text-sm text-gray-600 line-clamp-3">

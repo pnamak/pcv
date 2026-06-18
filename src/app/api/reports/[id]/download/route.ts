@@ -3,6 +3,8 @@ import { eq } from "drizzle-orm";
 import fs from "fs";
 import { db } from "@/lib/db";
 import { reports } from "@/lib/db/schema";
+import { getStaffUser } from "@/lib/auth";
+import { canAccessReport } from "@/lib/reports";
 import { getReportAbsolutePath } from "@/lib/uploads";
 
 export async function GET(
@@ -16,6 +18,14 @@ export async function GET(
 
   if (!report) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const staffUser = await getStaffUser();
+  if (!canAccessReport(report, staffUser)) {
+    return NextResponse.json(
+      { error: "This report is private. Staff login required." },
+      { status: 403 }
+    );
   }
 
   const filePath = getReportAbsolutePath(report.filePath);

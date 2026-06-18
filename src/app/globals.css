@@ -1,50 +1,76 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pcv-burgundy: #6b1d1d;
-  --color-pcv-burgundy-dark: #4a1414;
-  --color-pcv-burgundy-light: #8b2e2e;
-  --color-pcv-brown: #5c3d2e;
-  --color-pcv-brown-light: #7a5544;
-  --color-pcv-cream: #f5f0e8;
-  --color-pcv-cream-dark: #e8dfd3;
-  --color-pcv-gold: #c9a84c;
+  /* Blue & white PCV palette */
+  --color-pcv-burgundy: #1e40af;
+  --color-pcv-burgundy-dark: #1e3a8a;
+  --color-pcv-burgundy-light: #2563eb;
+  --color-pcv-brown: #1d4ed8;
+  --color-pcv-brown-light: #3b82f6;
+  --color-pcv-cream: #f8fafc;
+  --color-pcv-cream-dark: #dbeafe;
+  --color-pcv-gold: #93c5fd;
+  --color-pcv-orange: #bfdbfe;
   --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background-color: var(--color-pcv-cream);
-  color: #2d2d2d;
+  background-color: #ffffff;
+  color: #1e293b;
   font-family: var(--font-sans);
 }
 
 .hero-gradient {
+  position: relative;
+  isolation: isolate;
   background: linear-gradient(
     135deg,
-    var(--color-pcv-brown) 0%,
-    var(--color-pcv-burgundy-dark) 50%,
-    var(--color-pcv-burgundy) 100%
+    #1e3a8a 0%,
+    #1e40af 45%,
+    #2563eb 100%
   );
+}
+
+.hero-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/images/pcv-pattern.png");
+  background-repeat: repeat;
+  background-size: 320px auto;
+  opacity: 0.5;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+
+.hero-gradient > * {
+  position: relative;
+  z-index: 1;
 }
 
 .card-gradient {
   background: linear-gradient(
     135deg,
-    var(--color-pcv-brown-light) 0%,
-    var(--color-pcv-brown) 100%
+    #3b82f6 0%,
+    #1e40af 100%
   );
 }
 
 .btn-primary {
-  @apply rounded-full bg-pcv-burgundy px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-pcv-burgundy-dark;
+  @apply rounded-full bg-pcv-burgundy px-4 py-2 text-sm font-semibold text-white transition hover:bg-pcv-burgundy-dark sm:px-6 sm:py-2.5;
 }
 
 .btn-secondary {
-  @apply rounded-full border-2 border-pcv-burgundy bg-white px-6 py-2.5 text-sm font-semibold text-pcv-burgundy transition hover:bg-pcv-cream-dark;
+  @apply rounded-full border-2 border-pcv-burgundy bg-white px-4 py-2 text-sm font-semibold text-pcv-burgundy transition hover:bg-pcv-cream sm:px-6 sm:py-2.5;
 }
 
 .btn-outline-light {
-  @apply rounded-full border-2 border-white/80 bg-white/10 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20;
+  @apply rounded-full border-2 border-white/90 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/25 sm:px-6 sm:py-2.5;
 }
 
 .input-field {
@@ -56,11 +82,15 @@ body {
 }
 
 .section-card {
-  @apply rounded-2xl border border-pcv-cream-dark bg-white p-6 shadow-sm;
+  @apply rounded-2xl border border-pcv-cream-dark bg-white p-4 shadow-sm sm:p-6;
+}
+
+.page-container {
+  @apply mx-auto max-w-7xl px-4 py-6 sm:py-8 md:py-10;
 }
 
 .data-table {
-  @apply w-full text-left text-sm;
+  @apply w-full min-w-[640px] text-left text-sm;
 }
 
 .data-table th {
